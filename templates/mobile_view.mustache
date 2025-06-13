@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_course_recommendation/mobile_view
+
+    Template for the mobile view of the course recommendation block.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * title - The title of the block
+    * courses - Array of course objects
+    * courseimgurl - URL for the course image
+
+    Example context (json):
+    {
+        "title": "Recommended Courses",
+        "courses": [
+            {
+                "id": 2,
+                "fullname": "Course 1",
+                "categoryname": "Category 1",
+                "formatted_summary": "This is a summary of course 1"
+            }
+        ],
+        "courseimgurl": "https://moodle.org/theme/image.php?theme=boost&component=core&image=i/course"
+    }
+}}
+
+<ion-list>
+    <ion-list-header>
+        <ion-label>
+            <h2>{{ title }}</h2>
+        </ion-label>
+    </ion-list-header>
+
+    {{#courses}}
+    <ion-item button onclick="courseClicked({{ id }})">
+        <ion-thumbnail slot="start">
+            <img src="{{ courseimgurl }}" alt="{{ fullname }}">
+        </ion-thumbnail>
+        <ion-label>
+            <h2>{{ fullname }}</h2>
+            <p>{{ categoryname }}</p>
+            <p>{{ formatted_summary }}</p>
+        </ion-label>
+    </ion-item>
+    {{/courses}}
+</ion-list>

@@ -1,0 +1,39 @@
+/**
+ * Course recommendation block styles
+ *
+ * @package    block_course_recommendation
+ * @copyright  2025 Course Recommendation Plugin Team
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.block_course_recommendation .course-recommendation-block {
+    margin: 0;
+    padding: 0;
+}
+
+.block_course_recommendation .recommendation-item {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.block_course_recommendation .recommendation-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.block_course_recommendation .recommendation-item h4 {
+    margin: 0 0 5px 0;
+    font-size: 1em;
+}
+
+.block_course_recommendation .course-category {
+    font-size: 0.85em;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.block_course_recommendation .course-summary {
+    font-size: 0.9em;
+    margin-top: 5px;
+}
