@@ -204,37 +204,52 @@ class block_course_recommendation extends block_base {
      * @return string HTML content
      */
     private function render_courses($courses) {
-        global $OUTPUT;
-        
-        $content = html_writer::start_div('course-recommendation-block');
-        
+        global $CFG;
+        $textX = '';
+
         foreach ($courses as $course) {
-            $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
-            
-            $content .= html_writer::start_div('recommendation-item');
-            
-            // Course name with link
-            $content .= html_writer::start_tag('h4');
-            $content .= html_writer::link($courseurl, $course->fullname);
-            $content .= html_writer::end_tag('h4');
-            
-            // Category
-            $content .= html_writer::tag('div', 
-                get_string('category', 'block_course_recommendation') . ': ' . $course->categoryname, 
-                ['class' => 'course-category']);
-            
-            // Summary (shortened)
-            $summary = strip_tags($course->summary);
-            if (strlen($summary) > 200) {
-                $summary = substr($summary, 0, 197) . '...';
+            $courseid = $course->id;
+            $courseimg = $this->get_course_image($courseid);
+            if (empty($courseimg)) {
+                $courseimg = $CFG->wwwroot . '/theme/image.php?theme=boost&component=core&image=i/course';
             }
-            $content .= html_writer::tag('div', $summary, ['class' => 'course-summary']);
-            
-            $content .= html_writer::end_div(); // End recommendation-item
+            $coursename = $course->fullname;
+            $coursecat = $course->categoryname;
+            $courselink = $CFG->wwwroot . '/course/view.php?id=' . $courseid;
+            $textX .= <<<EOD
+                  <a class="card dashboard-card" href="$courselink">
+                    <div class="card-img dashboard-card-img" style='background-image: url("$courseimg");'></div>
+                    <div class="card-body pr-1 course-info-container c-card-cont">
+                        <p class="c-name">$coursename</p>
+                        <p class="c-cat-name">$coursecat</p>
+                    </div>
+                  </a>
+EOD;
         }
-        
-        $content .= html_writer::end_div(); // End course-recommendation-block
-        
-        return $content;
+        return <<<EOD
+            <div class="card-deck dashboard-card-deck">
+                $textX
+            </div>
+EOD;
+    }
+
+    /**
+     * Get the course image URL using Moodle's overviewfiles logic
+     * @param int $courseid
+     * @return string
+     */
+    private function get_course_image($courseid) {
+        global $CFG;
+        $url = '';
+        require_once($CFG->libdir . '/filelib.php');
+        $context = \context_course::instance($courseid);
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'course', 'overviewfiles', 0);
+        foreach ($files as $f) {
+            if ($f->is_valid_image()) {
+                $url = moodle_url::make_pluginfile_url($f->get_contextid(), $f->get_component(), $f->get_filearea(), null, $f->get_filepath(), $f->get_filename(), false);
+            }
+        }
+        return $url;
     }
 }
