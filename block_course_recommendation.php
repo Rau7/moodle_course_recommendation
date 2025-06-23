@@ -123,13 +123,14 @@ class block_course_recommendation extends block_base {
                 WHERE ue.userid = :userid";
         $params = ['userid' => $userid];
         $userenrolments = $DB->get_records_sql($sql, $params);
-        
+    
         if (empty($userenrolments)) {
             return [];
         }
         
         $usercoursesids = array_keys($userenrolments);
-        list($insql, $inparams) = $DB->get_in_or_equal($usercoursesids, SQL_PARAMS_NAMED);
+        // Her zaman IN/NOT IN kullanılmasını sağla (tek ders olsa bile)
+        list($insql, $inparams) = $DB->get_in_or_equal($usercoursesids, SQL_PARAMS_NAMED, 'cid', true);
         
         // Find similar users (users enrolled in at least one of the same courses)
         $sql = "SELECT DISTINCT ue.userid
@@ -155,7 +156,7 @@ class block_course_recommendation extends block_base {
                 JOIN {$prefix}enrol e ON e.courseid = c.id
                 JOIN {$prefix}user_enrolments ue ON ue.enrolid = e.id
                 WHERE ue.userid $usersql
-                AND c.id NOT $insql
+                AND NOT (c.id $insql)
                 AND c.visible = 1
                 GROUP BY c.id, cc.name
                 ORDER BY frequency DESC, c.fullname";
